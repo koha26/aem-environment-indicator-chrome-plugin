@@ -1,0 +1,34 @@
+# VS Code
+.vscode/
+
+### Vault ###
+.vlt
+
+### IntelliJ ###
+.idea/
+*.iml
+
+### Node.js ###
+# Log files
+*.log
+
+# NPM
+node_modules/
+yarn.lock
+
+# Webpack
+build/
+dist/
+actions/common/
+
+# Frontend Maven Plugin
+node/
+
+# Tests
+coverage/
+reports/
+
+# AI
+.claude/
+.superpowers/
+.cursor/

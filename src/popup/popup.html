@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AEM Environment Highlighter</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <header class="popup-header">
+      <span class="popup-title">AEM Env</span>
+      <label class="toggle-switch" title="Toggle all visual features">
+        <input type="checkbox" id="global-toggle">
+        <span class="toggle-slider"></span>
+      </label>
+    </header>
+
+    <main class="popup-body">
+      <div id="env-display" class="env-display hidden">
+        <span id="env-emoji" class="env-emoji"></span>
+        <span id="env-label" class="env-label"></span>
+        <span id="env-mode" class="env-mode"></span>
+      </div>
+
+      <div id="no-env-display" class="no-env">
+        No AEM environment detected
+      </div>
+
+      <div class="field-row">
+        <span class="field-label">Program</span>
+        <span id="program-name" class="field-value">—</span>
+      </div>
+
+      <div class="field-row">
+        <span class="field-label">Override</span>
+        <select id="override-select" class="override-select">
+          <option value="">Auto-detect</option>
+          <option value="DEV">DEV</option>
+          <option value="STAGE">STAGE</option>
+          <option value="PROD">PROD</option>
+          <option value="QA">QA</option>
+          <option value="UAT">UAT</option>
+          <option value="RELEASE">RELEASE</option>
+        </select>
+      </div>
+    </main>
+
+    <footer class="popup-footer">
+      <a href="#" id="open-options" class="settings-link">⚙ Settings</a>
+    </footer>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

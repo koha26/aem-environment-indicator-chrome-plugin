@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AEM Environment Highlighter — Settings</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="options-container">
+    <h1 class="page-title">AEM Environment Highlighter</h1>
+
+    <!-- Global Features -->
+    <section class="accordion-section" id="section-features">
+      <button class="accordion-header" aria-expanded="true" data-target="body-features">
+        Global Features
+        <span class="accordion-arrow">▾</span>
+      </button>
+      <div class="accordion-body" id="body-features">
+        <div class="features-grid">
+          <label class="feature-toggle">
+            <input type="checkbox" id="feat-badge">
+            <span>Tab badge (D / S / P)</span>
+          </label>
+          <label class="feature-toggle">
+            <input type="checkbox" id="feat-favicon">
+            <span>Favicon overlay</span>
+          </label>
+          <label class="feature-toggle">
+            <input type="checkbox" id="feat-title">
+            <span>Title prefix [DEV]</span>
+          </label>
+          <label class="feature-toggle">
+            <input type="checkbox" id="feat-emoji">
+            <span>Emoji in title (🔵🟠🔴)</span>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <!-- Programs & Environments -->
+    <section class="accordion-section" id="section-programs">
+      <button class="accordion-header" aria-expanded="true" data-target="body-programs">
+        Programs &amp; Environments
+        <span class="accordion-arrow">▾</span>
+      </button>
+      <div class="accordion-body" id="body-programs">
+        <div id="programs-list"></div>
+        <button id="add-program" class="btn-primary">+ Add Program</button>
+      </div>
+    </section>
+
+    <!-- Fallback Patterns -->
+    <section class="accordion-section" id="section-fallback">
+      <button class="accordion-header" aria-expanded="false" data-target="body-fallback">
+        Fallback Hostname Patterns
+        <span class="accordion-arrow">▸</span>
+      </button>
+      <div class="accordion-body collapsed" id="body-fallback">
+        <p class="section-hint">Regex patterns matched against the hostname when no program URL matches.</p>
+        <div id="fallback-list"></div>
+        <button id="add-fallback" class="btn-secondary">+ Add Pattern</button>
+      </div>
+    </section>
+
+    <!-- Export / Import -->
+    <section class="accordion-section" id="section-export">
+      <button class="accordion-header" aria-expanded="false" data-target="body-export">
+        Export / Import
+        <span class="accordion-arrow">▸</span>
+      </button>
+      <div class="accordion-body collapsed" id="body-export">
+        <div class="export-row">
+          <button id="btn-export" class="btn-secondary">⬇ Export Config</button>
+          <label class="btn-secondary btn-file-label" for="btn-import">⬆ Import Config</label>
+          <input type="file" id="btn-import" accept=".json">
+        </div>
+      </div>
+    </section>
+
+    <div id="status-message" class="status-message hidden"></div>
+  </div>
+  <script src="options.js"></script>
+</body>
+</html>

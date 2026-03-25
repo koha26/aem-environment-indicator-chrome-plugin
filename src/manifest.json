@@ -1,0 +1,43 @@
+{
+  "manifest_version": 3,
+  "minimum_chrome_version": "93",
+  "name": "AEM Environment Highlighter",
+  "version": "1.0.0",
+  "description": "Highlights AEM environment types (DEV/STAGE/PROD) visually in the browser.",
+  "permissions": ["storage", "tabs", "activeTab", "scripting"],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "background/service-worker.js",
+    "type": "module"
+  },
+  "content_scripts": [{
+    "matches": ["<all_urls>"],
+    "js": ["content/content.js"],
+    "run_at": "document_idle",
+    "all_frames": true
+  }],
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "AEM Environment Highlighter",
+    "default_icon": {
+      "16": "assets/icon16.png",
+      "48": "assets/icon48.png",
+      "128": "assets/icon128.png"
+    }
+  },
+  "options_ui": {
+    "page": "options/options.html",
+    "open_in_tab": true
+  },
+  "commands": {
+    "toggle-override": {
+      "suggested_key": { "default": "Alt+Shift+E" },
+      "description": "Cycle environment override for active tab"
+    }
+  },
+  "icons": {
+    "16": "assets/icon16.png",
+    "48": "assets/icon48.png",
+    "128": "assets/icon128.png"
+  }
+}

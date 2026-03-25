@@ -1,0 +1,340 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #1a1a2e;
+  color: #e0e0e0;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  min-height: 100vh;
+}
+
+.options-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px 20px 48px;
+}
+
+.page-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #64b5f6;
+  margin-bottom: 24px;
+  letter-spacing: 0.3px;
+}
+
+/* ─── Accordions ─────────────────────────────────────────────────────────── */
+
+.accordion-section {
+  border: 1px solid #2a2a4a;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+.accordion-header {
+  width: 100%;
+  background: #1e1e3f;
+  color: #e0e0e0;
+  border: none;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.15s;
+}
+
+.accordion-header:hover {
+  background: #26264a;
+}
+
+.accordion-arrow {
+  font-size: 12px;
+  color: #9e9e9e;
+}
+
+.accordion-body {
+  padding: 16px;
+  background: #16163a;
+}
+
+.accordion-body.collapsed {
+  display: none;
+}
+
+/* ─── Features ───────────────────────────────────────────────────────────── */
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.feature-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #ccc;
+}
+
+.feature-toggle input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #1976d2;
+  cursor: pointer;
+}
+
+/* ─── Programs ───────────────────────────────────────────────────────────── */
+
+.program-card {
+  border: 1px solid #2a2a4a;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+.program-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #1e1e3f;
+  padding: 10px 12px;
+}
+
+.program-name-input {
+  flex: 1;
+  background: transparent;
+  color: #e0e0e0;
+  border: none;
+  border-bottom: 1px solid #444;
+  padding: 3px 4px;
+  font-size: 14px;
+  font-weight: 600;
+  outline: none;
+}
+
+.program-name-input:focus {
+  border-bottom-color: #64b5f6;
+}
+
+/* Env table */
+.env-table {
+  width: 100%;
+}
+
+.env-table-header {
+  display: grid;
+  grid-template-columns: 90px 1fr 32px;
+  gap: 8px;
+  padding: 6px 12px;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: #888;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid #2a2a4a;
+}
+
+.env-row {
+  display: grid;
+  grid-template-columns: 90px 1fr 32px;
+  gap: 8px;
+  align-items: center;
+  padding: 6px 12px;
+  border-bottom: 1px solid #1e1e3a;
+}
+
+.env-row:last-child {
+  border-bottom: none;
+}
+
+.env-type-select {
+  background: #252540;
+  color: #e0e0e0;
+  border: 1px solid #444;
+  border-radius: 4px;
+  padding: 4px 6px;
+  font-size: 12px;
+  width: 100%;
+}
+
+.env-pattern-input {
+  background: transparent;
+  color: #ccc;
+  border: none;
+  border-bottom: 1px solid #333;
+  padding: 3px 4px;
+  font-size: 12px;
+  font-family: 'Courier New', monospace;
+  width: 100%;
+  outline: none;
+}
+
+.env-pattern-input:focus {
+  border-bottom-color: #64b5f6;
+}
+
+/* Fallback patterns */
+.fallback-row {
+  display: grid;
+  grid-template-columns: 1fr 90px 32px;
+  gap: 8px;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid #1e1e3a;
+}
+
+.fallback-row:last-child {
+  border-bottom: none;
+}
+
+.fallback-pattern-input {
+  background: transparent;
+  color: #ccc;
+  border: none;
+  border-bottom: 1px solid #333;
+  padding: 3px 4px;
+  font-size: 12px;
+  font-family: 'Courier New', monospace;
+  width: 100%;
+  outline: none;
+}
+
+.fallback-pattern-input:focus {
+  border-bottom-color: #64b5f6;
+}
+
+.fallback-type-select {
+  background: #252540;
+  color: #e0e0e0;
+  border: 1px solid #444;
+  border-radius: 4px;
+  padding: 4px 6px;
+  font-size: 12px;
+  width: 100%;
+}
+
+/* ─── Export / Import ────────────────────────────────────────────────────── */
+
+.export-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.btn-file-label {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+/* ─── Section hints ──────────────────────────────────────────────────────── */
+
+.section-hint {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+/* ─── Buttons ────────────────────────────────────────────────────────────── */
+
+.btn-primary {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s;
+  margin-top: 12px;
+  width: 100%;
+}
+
+.btn-primary:hover {
+  background: #1565c0;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: #9e9e9e;
+  border: 1px solid #444;
+  border-radius: 4px;
+  padding: 6px 14px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.btn-secondary:hover {
+  border-color: #64b5f6;
+  color: #64b5f6;
+}
+
+.btn-sm {
+  padding: 4px 10px;
+  font-size: 12px;
+}
+
+.btn-xs {
+  padding: 2px 6px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.btn-danger {
+  background: transparent;
+  color: #ef9a9a;
+  border: 1px solid #c62828;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-danger:hover {
+  background: rgba(198, 40, 40, 0.15);
+}
+
+/* ─── Status message ─────────────────────────────────────────────────────── */
+
+.status-message {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  transition: opacity 0.3s;
+}
+
+.status-message.success {
+  background: #1b5e20;
+  color: #a5d6a7;
+  border: 1px solid #2e7d32;
+}
+
+.status-message.error {
+  background: #b71c1c;
+  color: #ffcdd2;
+  border: 1px solid #c62828;
+}
+
+.status-message.hidden {
+  display: none;
+}
