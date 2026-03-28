@@ -9,10 +9,30 @@ import {
   getFallbackPatterns,
   getFeatures,
   getOverrides,
+  getFullConfig,
+  setPrograms,
   setFeatures,
   setOverrides,
 } from '../shared/storage.js';
 import { matchEnvironment } from '../shared/matcher.js';
+
+// ─── Pure env resolver ────────────────────────────────────────────────────────
+/**
+ * Resolves the environment type for a hostname purely from stored config.
+ * No side effects — takes all dependencies as parameters.
+ *
+ * Priority: user override → program/pattern matcher
+ * Auto-detected hostnames are stored as program entries, so the matcher finds them.
+ *
+ * @param {string} hostname
+ * @param {{ overrides: object, programs: Array, fallbackPatterns: Array }} config
+ * @returns {{ envType: string|null, programName: string|null, programId: string|null }}
+ */
+function resolveEnvForHostname(hostname, { overrides, programs, fallbackPatterns }) {
+  const match   = matchEnvironment(hostname, programs, fallbackPatterns);
+  const envType = overrides[hostname]?.envType ?? match.envType;
+  return { envType, programName: match.programName, programId: match.programId };
+}
 
 // ─── In-memory tab state ──────────────────────────────────────────────────────
 // Map<tabId, { envType, programName, programId, mode, hostname, enabled }>
@@ -54,37 +74,54 @@ async function handleReportEnv({ hostname, envType: domEnvType, mode }, sender) 
     getOverrides(),
   ]);
 
-  // Resolve env type: DOM detection → hostname matcher
-  let envType = domEnvType;
-  let programId = null;
-  let programName = null;
+  let matchResult = matchEnvironment(hostname, programs, fallbackPatterns);
+  const override  = overrides[hostname];
+  const envType   = override?.envType ?? domEnvType ?? matchResult.envType;
 
-  if (!envType) {
-    const match = matchEnvironment(hostname, programs, fallbackPatterns);
-    envType     = match.envType;
-    programId   = match.programId;
-    programName = match.programName;
-  } else {
-    // DOM detected — still try to find the program name via matcher
-    const match = matchEnvironment(hostname, programs, fallbackPatterns);
-    programId   = match.programId;
-    programName = match.programName;
+  // Auto-create a program when the content script detects an env for a hostname
+  // that isn't covered by any existing program or fallback pattern.
+  // The new program entry persists the detection in chrome.storage.sync so the
+  // matcher resolves it on all future loads — and it appears in Settings → Programs.
+  if (domEnvType && !matchResult.envType && !override) {
+    const newProgram = {
+      id:           crypto.randomUUID(),
+      name:         hostname,
+      environments: [{ id: crypto.randomUUID(), type: domEnvType, urlPattern: hostname }],
+    };
+    const updatedPrograms = [...programs, newProgram];
+    await setPrograms(updatedPrograms);
+    // Re-match with the saved program to get correct programId/programName for tabState
+    matchResult = matchEnvironment(hostname, updatedPrograms, fallbackPatterns);
   }
 
-  // Apply override if present
-  const override = overrides[hostname];
-  if (override?.envType) {
-    envType = override.envType;
+  // Fan-out: push badge + visuals to every other open tab on the same hostname
+  // so they light up immediately without a reload.
+  if (domEnvType && envType) {
+    const allTabs = await chrome.tabs.query({ url: ['http://*/*', 'https://*/*'] });
+    for (const tab of allTabs) {
+      if (tab.id === tabId) continue;
+      try {
+        if (new URL(tab.url ?? '').hostname !== hostname) continue;
+        const existing = tabState.get(tab.id) ?? {};
+        tabState.set(tab.id, { ...existing, envType, hostname, enabled: true });
+        updateBadge(tab.id, envType, features, true);
+        chrome.tabs.sendMessage(tab.id, {
+          type:    MESSAGE_TYPES.APPLY_VISUALS,
+          envType,
+          enabled: true,
+          features,
+        }).catch(() => {});
+      } catch {
+        // Non-URL tab — skip
+      }
+    }
   }
 
+  const { programId, programName } = matchResult;
   const enabled = !!envType;
 
   tabState.set(tabId, { envType, programName, programId, mode, hostname, enabled });
-
-  // Update badge
   updateBadge(tabId, envType, features, enabled);
-
-  // Respond to content script with visuals config
   return { envType, enabled, features };
 }
 
@@ -159,13 +196,52 @@ chrome.tabs.onRemoved.addListener((tabId) => {
   tabState.delete(tabId);
 });
 
-chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
-  if (changeInfo.status === 'loading') {
-    // Page is navigating — clear stale state; content script will REPORT_ENV again
-    tabState.delete(tabId);
+chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
+  if (changeInfo.status !== 'loading') return;
+
+  // Clear stale in-memory state — content script will REPORT_ENV with fresh data
+  tabState.delete(tabId);
+
+  // Eagerly restore badge from stored config so it appears immediately on navigation,
+  // without waiting for the content script's full load → REPORT_ENV cycle.
+  try {
+    const url = tab.url ?? '';
+    if (!url || url.startsWith('chrome') || url.startsWith('about')) {
+      chrome.action.setBadgeText({ tabId, text: '' }).catch(() => {});
+      return;
+    }
+
+    const hostname = new URL(url).hostname;
+    const { overrides, programs, fallbackPatterns, features } = await getFullConfig();
+    const { envType } = resolveEnvForHostname(hostname, { overrides, programs, fallbackPatterns });
+    updateBadge(tabId, envType, features, !!envType);
+  } catch {
     chrome.action.setBadgeText({ tabId, text: '' }).catch(() => {});
   }
 });
+
+// ─── SW Startup: restore badges for all open tabs ────────────────────────────
+// Runs once per SW lifecycle. When Chrome terminates an idle SW and then restarts
+// it (e.g., on tab navigation or popup open), tabState is empty. Re-apply badges
+// to every open tab that can be resolved from stored config.
+(async () => {
+  try {
+    const { overrides, programs, fallbackPatterns, features } = await getFullConfig();
+    const tabs = await chrome.tabs.query({ url: ['http://*/*', 'https://*/*'] });
+
+    for (const tab of tabs) {
+      try {
+        const hostname = new URL(tab.url).hostname;
+        const { envType } = resolveEnvForHostname(hostname, { overrides, programs, fallbackPatterns });
+        updateBadge(tab.id, envType, features, !!envType);
+      } catch {
+        // Non-parseable URL — skip
+      }
+    }
+  } catch {
+    // Storage unavailable on first install — no-op
+  }
+})();
 
 // ─── Keyboard Shortcut ────────────────────────────────────────────────────────
 chrome.commands.onCommand.addListener(async (command) => {

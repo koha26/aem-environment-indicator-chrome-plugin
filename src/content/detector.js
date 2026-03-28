@@ -96,6 +96,55 @@ export function detectFromDom() {
 }
 
 /**
+ * Extracts an envType from a native AEM Unified Shell postMessage event payload.
+ *
+ * The AEM Unified Shell (running inside a child iframe) naturally broadcasts
+ * these QUEUE messages to window.parent — the top-frame content script receives
+ * them without any iframe relay.
+ *
+ * Detection priority within each SHELL_SETTINGS entry:
+ *   1. customEnvLabel — explicit Adobe environment label (non-empty array or string)
+ *   2. digitalData    — embedded JSON string → .page.attributes.environment
+ *
+ * @param {object} data - e.data from a postMessage event
+ * @returns {string|null} mapped ENV_TYPE string or null if unrecognised
+ */
+export function extractEnvFromShellMessage(data) {
+  if (data?.appId !== 'aemshell' || data?.type !== 'QUEUE') return null;
+
+  const entries = Array.isArray(data.value) ? data.value : [];
+  for (const entry of entries) {
+    if (!Array.isArray(entry) || entry[0] !== 'SHELL_SETTINGS') continue;
+    const payload = entry[1];
+    if (!payload || typeof payload !== 'object') continue;
+
+    // 1. customEnvLabel — array (e.g. ["dev"]) or plain string
+    const label = payload.customEnvLabel;
+    if (Array.isArray(label) && label[0]) {
+      const mapped = mapEnvString(label[0]);
+      if (mapped) return mapped;
+    }
+    if (typeof label === 'string' && label) {
+      const mapped = mapEnvString(label);
+      if (mapped) return mapped;
+    }
+
+    // 2. digitalData — JSON string with page.attributes.environment
+    if (typeof payload.digitalData === 'string') {
+      try {
+        const dd     = JSON.parse(payload.digitalData);
+        const mapped = mapEnvString(dd?.page?.attributes?.environment);
+        if (mapped) return mapped;
+      } catch {
+        // malformed JSON — skip
+      }
+    }
+  }
+
+  return null;
+}
+
+/**
  * Detects whether the current page is AEM Author or Publish mode.
  * Returns 'author', 'publish', or 'unknown'.
  */

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "webpack --mode production",
+    "build": "webpack --mode development",
     "dev": "webpack --mode development --watch",
     "generate-icons": "node scripts/generate-icons.js",
     "test": "vitest run"
