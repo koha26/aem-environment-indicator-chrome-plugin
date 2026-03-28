@@ -1,5 +1,6 @@
 import './popup.css';
-import { MESSAGE_TYPES, ENV_COLORS, ENV_EMOJIS } from '../shared/constants.js';
+import { MESSAGE_TYPES } from '../shared/constants.js';
+import { syncChips } from '../shared/ui-utils.js';
 
 async function init() {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -22,15 +23,18 @@ function renderState(state) {
   toggle.checked = features?.badge !== false;
 
   if (envType) {
-    // Hide "no env" message, show env display
     document.getElementById('no-env-display').classList.add('hidden');
     const display = document.getElementById('env-display');
     display.classList.remove('hidden');
-    display.style.borderLeftColor = ENV_COLORS[envType] ?? '#666';
 
-    document.getElementById('env-emoji').textContent = ENV_EMOJIS[envType] ?? '';
+    const cssKey = envType.toLowerCase().replace('stage', 'stg');
+    display.className = 'env-display env-' + cssKey;
+
+    const pill = document.getElementById('env-pill');
+    pill.textContent = envType;
+    pill.className = 'env-pill ' + cssKey;
+
     document.getElementById('env-label').textContent = envType;
-    document.getElementById('env-label').style.color = ENV_COLORS[envType] ?? '#e0e0e0';
     document.getElementById('env-mode').textContent  = mode && mode !== 'unknown' ? `(${mode})` : '';
   }
 
@@ -39,9 +43,19 @@ function renderState(state) {
   // Set override dropdown value
   const currentOverride = (hostname && overrides?.[hostname]?.envType) ?? '';
   document.getElementById('override-select').value = currentOverride;
+  syncChips(document.getElementById('override-chips'), currentOverride);
 }
 
 function bindEvents(state, tabId) {
+  document.getElementById('override-chips').addEventListener('click', e => {
+    const chip = e.target.closest('.chip');
+    if (!chip) return;
+    document.getElementById('override-select').value = chip.dataset.value;
+    // Triggers existing persistence handler (sends SET_OVERRIDE to SW, closes popup)
+    document.getElementById('override-select').dispatchEvent(new Event('change'));
+    syncChips(document.getElementById('override-chips'), chip.dataset.value);
+  });
+
   // Override select — when changed, send SET_OVERRIDE to SW
   document.getElementById('override-select').addEventListener('change', async (e) => {
     const envType  = e.target.value || null;

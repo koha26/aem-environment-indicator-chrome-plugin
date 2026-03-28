@@ -17,7 +17,7 @@
 
     <main class="popup-body">
       <div id="env-display" class="env-display hidden">
-        <span id="env-emoji" class="env-emoji"></span>
+        <span id="env-pill" class="env-pill"></span>
         <span id="env-label" class="env-label"></span>
         <span id="env-mode" class="env-mode"></span>
       </div>
@@ -26,22 +26,32 @@
         No AEM environment detected
       </div>
 
-      <div class="field-row">
-        <span class="field-label">Program</span>
-        <span id="program-name" class="field-value">—</span>
-      </div>
-
-      <div class="field-row">
-        <span class="field-label">Override</span>
-        <select id="override-select" class="override-select">
-          <option value="">Auto-detect</option>
-          <option value="DEV">DEV</option>
-          <option value="STAGE">STAGE</option>
-          <option value="PROD">PROD</option>
-          <option value="QA">QA</option>
-          <option value="UAT">UAT</option>
-          <option value="RELEASE">RELEASE</option>
-        </select>
+      <div class="info-card">
+        <div class="field-row">
+          <span class="field-label">Program</span>
+          <span id="program-name" class="field-value">—</span>
+        </div>
+        <div class="field-row">
+          <span class="field-label">Override</span>
+          <div class="override-chips" id="override-chips">
+            <button class="chip" data-value="">auto</button>
+            <button class="chip" data-value="DEV">DEV</button>
+            <button class="chip" data-value="STAGE">STAGE</button>
+            <button class="chip" data-value="PROD">PROD</button>
+            <button class="chip" data-value="QA">QA</button>
+            <button class="chip" data-value="UAT">UAT</button>
+            <button class="chip" data-value="RELEASE">RELEASE</button>
+          </div>
+          <select id="override-select" class="override-select" style="display:none">
+            <option value="">Auto-detect</option>
+            <option value="DEV">DEV</option>
+            <option value="STAGE">STAGE</option>
+            <option value="PROD">PROD</option>
+            <option value="QA">QA</option>
+            <option value="UAT">UAT</option>
+            <option value="RELEASE">RELEASE</option>
+          </select>
+        </div>
       </div>
     </main>
 

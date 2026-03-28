@@ -16,23 +16,67 @@
         <span class="accordion-arrow">▾</span>
       </button>
       <div class="accordion-body" id="body-features">
-        <div class="features-grid">
-          <label class="feature-toggle">
-            <input type="checkbox" id="feat-badge">
-            <span>Tab badge (D / S / P)</span>
-          </label>
-          <label class="feature-toggle">
-            <input type="checkbox" id="feat-favicon">
-            <span>Favicon overlay</span>
-          </label>
-          <label class="feature-toggle">
-            <input type="checkbox" id="feat-title">
-            <span>Title prefix [DEV]</span>
-          </label>
-          <label class="feature-toggle">
-            <input type="checkbox" id="feat-emoji">
-            <span>Emoji in title (🔵🟠🔴)</span>
-          </label>
+        <div class="features-list">
+          <div class="feature-row">
+            <div class="row-icon" style="background:rgba(45,157,120,0.1);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2D9D78" stroke-width="2.5">
+                <rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 12l2 2 4-4"/>
+              </svg>
+            </div>
+            <div class="row-text">
+              <div class="row-title">Tab badge</div>
+              <div class="row-sub">Show D / S / P in browser tab</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="feat-badge">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="feature-row">
+            <div class="row-icon" style="background:rgba(20,115,230,0.1);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1473E6" stroke-width="2.5">
+                <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/>
+              </svg>
+            </div>
+            <div class="row-text">
+              <div class="row-title">Favicon overlay</div>
+              <div class="row-sub">Colour-tint the tab favicon</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="feat-favicon">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="feature-row">
+            <div class="row-icon" style="background:rgba(230,134,25,0.1);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#E68619" stroke-width="2.5">
+                <path d="M4 6h16M4 12h10M4 18h7"/>
+              </svg>
+            </div>
+            <div class="row-text">
+              <div class="row-title">Title prefix</div>
+              <div class="row-sub">Prepend [DEV] / [STG] / [PROD]</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="feat-title">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="feature-row">
+            <div class="row-icon" style="background:rgba(146,86,217,0.1);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9256D9" stroke-width="2.5">
+                <path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>
+              </svg>
+            </div>
+            <div class="row-text">
+              <div class="row-title">Emoji in title</div>
+              <div class="row-sub">Prepend 🔵🟠🔴 to page title</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="feat-emoji">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
         </div>
       </div>
     </section>

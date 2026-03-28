@@ -9,6 +9,7 @@ import {
   setFullConfig,
 } from '../shared/storage.js';
 import { ENV_TYPES, MESSAGE_TYPES } from '../shared/constants.js';
+import { updateEnvTypeBadge } from '../shared/ui-utils.js';
 
 // ─── Utilities ────────────────────────────────────────────────────────────────
 
@@ -149,6 +150,10 @@ function renderEnvRow(env, pIdx, eIdx) {
     <button class="btn-danger btn-xs delete-env" data-pidx="${pIdx}" data-eidx="${eIdx}" title="Remove">×</button>
   `;
 
+  const typeSelect = row.querySelector('.env-type-select');
+  updateEnvTypeBadge(typeSelect);
+  typeSelect.addEventListener('change', () => updateEnvTypeBadge(typeSelect));
+
   return row;
 }
 
@@ -243,6 +248,10 @@ function renderFallbackPatterns(patterns) {
     `;
 
     container.appendChild(row);
+
+    const typeSelect = row.querySelector('.fallback-type-select');
+    updateEnvTypeBadge(typeSelect);
+    typeSelect.addEventListener('change', () => updateEnvTypeBadge(typeSelect));
   });
 
   bindFallbackEvents(container, patterns);
