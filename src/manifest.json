@@ -20,9 +20,9 @@
     "default_popup": "popup/popup.html",
     "default_title": "AEM Environment Highlighter",
     "default_icon": {
-      "16": "assets/icon16.png",
-      "48": "assets/icon48.png",
-      "128": "assets/icon128.png"
+      "16": "assets/icon-disabled16.png",
+      "48": "assets/icon-disabled48.png",
+      "128": "assets/icon-disabled128.png"
     }
   },
   "options_ui": {

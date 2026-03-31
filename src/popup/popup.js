@@ -34,8 +34,8 @@ function renderState(state) {
     pill.textContent = envType;
     pill.className = 'env-pill ' + cssKey;
 
-    document.getElementById('env-label').textContent = envType;
-    document.getElementById('env-mode').textContent  = mode && mode !== 'unknown' ? `(${mode})` : '';
+    const modeText = (mode && mode !== 'unknown') ? ` (${mode})` : '';
+    document.getElementById('env-label').textContent = `${hostname}${modeText}`;
   }
 
   document.getElementById('program-name').textContent = programName || '—';

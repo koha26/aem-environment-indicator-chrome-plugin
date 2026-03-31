@@ -17,14 +17,18 @@ export function syncChips(container, value) {
  * Updates the CSS badge class on an env-type or fallback-type <select>
  * to reflect its current value.
  *
- * QA/UAT/RELEASE reuse the nearest semantic colour: QA≈DEV, UAT/RELEASE≈STAGE.
+ * Each environment maps to its own CSS class so styles can use unique colors.
  *
  * @param {HTMLSelectElement} select
  */
 export function updateEnvTypeBadge(select) {
   const typeMap = {
-    DEV: 'type-dev', STAGE: 'type-stg', PROD: 'type-prod',
-    QA: 'type-dev', UAT: 'type-stg', RELEASE: 'type-stg',
+    DEV: 'type-dev',
+    STAGE: 'type-stg',
+    PROD: 'type-prod',
+    QA: 'type-qa',
+    UAT: 'type-uat',
+    RELEASE: 'type-release',
   };
   const baseClass = select.classList.contains('env-type-select')
     ? 'env-type-select'

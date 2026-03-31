@@ -175,10 +175,59 @@ body {
 
 /* ─── Programs ─── */
 
+/* Empty state */
+.programs-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 36px 16px;
+  text-align: center;
+}
+
+.programs-empty-icon {
+  opacity: 0.5;
+  margin-bottom: 4px;
+}
+
+.programs-empty-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: #A0A0B8;
+}
+
+.programs-empty-sub {
+  font-size: 12px;
+  color: #C0C0D8;
+}
+
+/* Auto-detected badge */
+.program-auto-badge {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 20px;
+  background: rgba(20,115,230,0.08);
+  color: #1473E6;
+  border: 1px solid rgba(20,115,230,0.18);
+  flex-shrink: 0;
+}
+
+#body-programs {
+  padding: 0;
+}
+
+.programs-add-row {
+  padding: 12px;
+}
+
 .program-card {
   background: #fff;
   border-radius: 12px;
-  margin-bottom: 12px;
+  margin: 12px 12px 0;
   overflow: hidden;
   box-shadow: 0 2px 12px rgba(20,115,230,0.06), 0 0 0 1px rgba(20,115,230,0.05);
 }
@@ -254,9 +303,12 @@ body {
   color: #8888A8;
 }
 
-.env-type-select.type-dev  { background: rgba(45,157,120,0.1); color: #2D9D78; border: 1px solid rgba(45,157,120,0.2); }
-.env-type-select.type-stg  { background: rgba(230,134,25,0.1); color: #E68619; border: 1px solid rgba(230,134,25,0.2); }
-.env-type-select.type-prod { background: rgba(20,115,230,0.1); color: #1473E6; border: 1px solid rgba(20,115,230,0.2); }
+.env-type-select.type-dev     { background: rgba(25,118,210,0.1); color: #1976D2; border: 1px solid rgba(25,118,210,0.2); }
+.env-type-select.type-stg     { background: rgba(245,124,0,0.1); color: #F57C00; border: 1px solid rgba(245,124,0,0.2); }
+.env-type-select.type-prod    { background: rgba(211,47,47,0.1); color: #D32F2F; border: 1px solid rgba(211,47,47,0.2); }
+.env-type-select.type-qa      { background: rgba(123,31,162,0.1); color: #7B1FA2; border: 1px solid rgba(123,31,162,0.2); }
+.env-type-select.type-uat     { background: rgba(56,142,60,0.1); color: #388E3C; border: 1px solid rgba(56,142,60,0.2); }
+.env-type-select.type-release { background: rgba(69,90,100,0.1); color: #455A64; border: 1px solid rgba(69,90,100,0.2); }
 
 .env-pattern-input {
   background: transparent;
@@ -322,9 +374,12 @@ body {
   color: #8888A8;
 }
 
-.fallback-type-select.type-dev  { background: rgba(45,157,120,0.1); color: #2D9D78; border: 1px solid rgba(45,157,120,0.2); }
-.fallback-type-select.type-stg  { background: rgba(230,134,25,0.1); color: #E68619; border: 1px solid rgba(230,134,25,0.2); }
-.fallback-type-select.type-prod { background: rgba(20,115,230,0.1); color: #1473E6; border: 1px solid rgba(20,115,230,0.2); }
+.fallback-type-select.type-dev     { background: rgba(25,118,210,0.1); color: #1976D2; border: 1px solid rgba(25,118,210,0.2); }
+.fallback-type-select.type-stg     { background: rgba(245,124,0,0.1); color: #F57C00; border: 1px solid rgba(245,124,0,0.2); }
+.fallback-type-select.type-prod    { background: rgba(211,47,47,0.1); color: #D32F2F; border: 1px solid rgba(211,47,47,0.2); }
+.fallback-type-select.type-qa      { background: rgba(123,31,162,0.1); color: #7B1FA2; border: 1px solid rgba(123,31,162,0.2); }
+.fallback-type-select.type-uat     { background: rgba(56,142,60,0.1); color: #388E3C; border: 1px solid rgba(56,142,60,0.2); }
+.fallback-type-select.type-release { background: rgba(69,90,100,0.1); color: #455A64; border: 1px solid rgba(69,90,100,0.2); }
 
 /* ─── Auto-Detected Environments ─── */
 
@@ -362,9 +417,12 @@ body {
   color: #8888A8;
 }
 
-.detected-env-tag.type-dev  { background: rgba(45,157,120,0.1); color: #2D9D78; border-color: rgba(45,157,120,0.2); }
-.detected-env-tag.type-stg  { background: rgba(230,134,25,0.1); color: #E68619; border-color: rgba(230,134,25,0.2); }
-.detected-env-tag.type-prod { background: rgba(20,115,230,0.1); color: #1473E6; border-color: rgba(20,115,230,0.2); }
+.detected-env-tag.type-dev     { background: rgba(25,118,210,0.1); color: #1976D2; border-color: rgba(25,118,210,0.2); }
+.detected-env-tag.type-stg     { background: rgba(245,124,0,0.1); color: #F57C00; border-color: rgba(245,124,0,0.2); }
+.detected-env-tag.type-prod    { background: rgba(211,47,47,0.1); color: #D32F2F; border-color: rgba(211,47,47,0.2); }
+.detected-env-tag.type-qa      { background: rgba(123,31,162,0.1); color: #7B1FA2; border-color: rgba(123,31,162,0.2); }
+.detected-env-tag.type-uat     { background: rgba(56,142,60,0.1); color: #388E3C; border-color: rgba(56,142,60,0.2); }
+.detected-env-tag.type-release { background: rgba(69,90,100,0.1); color: #455A64; border-color: rgba(69,90,100,0.2); }
 
 .detected-empty {
   padding: 12px 16px;
@@ -408,7 +466,6 @@ input[type="file"] {
   font-size: 13px;
   cursor: pointer;
   transition: background 0.15s;
-  margin-top: 12px;
   width: 100%;
   box-shadow: 0 3px 10px rgba(20,115,230,0.3);
 }

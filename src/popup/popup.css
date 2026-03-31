@@ -110,13 +110,12 @@ body {
 }
 
 /* Named env types */
-.env-display.env-dev     { border-left-color: #2D9D78; }
-.env-display.env-stg     { border-left-color: #E68619; }
-.env-display.env-prod    { border-left-color: #1473E6; }
-/* Alias env types */
-.env-display.env-qa      { border-left-color: #2D9D78; } /* QA ≈ DEV */
-.env-display.env-uat     { border-left-color: #E68619; } /* UAT ≈ STG */
-.env-display.env-release { border-left-color: #E68619; } /* RELEASE ≈ STG */
+.env-display.env-dev     { border-left-color: #1976D2; }
+.env-display.env-stg     { border-left-color: #F57C00; }
+.env-display.env-prod    { border-left-color: #D32F2F; }
+.env-display.env-qa      { border-left-color: #7B1FA2; }
+.env-display.env-uat     { border-left-color: #388E3C; }
+.env-display.env-release { border-left-color: #455A64; }
 
 /* ─── Env pill ─── */
 
@@ -129,28 +128,24 @@ body {
   flex-shrink: 0;
 }
 
-/* Named */
-.env-pill.prod    { background: rgba(20,115,230,0.1); color: #1473E6; border: 1px solid rgba(20,115,230,0.25); }
-.env-pill.dev     { background: rgba(45,157,120,0.1); color: #2D9D78; border: 1px solid rgba(45,157,120,0.25); }
-.env-pill.stg     { background: rgba(230,134,25,0.1); color: #E68619; border: 1px solid rgba(230,134,25,0.25); }
-/* Aliases */
-.env-pill.qa      { background: rgba(45,157,120,0.1); color: #2D9D78; border: 1px solid rgba(45,157,120,0.25); }
-.env-pill.uat     { background: rgba(230,134,25,0.1); color: #E68619; border: 1px solid rgba(230,134,25,0.25); }
-.env-pill.release { background: rgba(230,134,25,0.1); color: #E68619; border: 1px solid rgba(230,134,25,0.25); }
+.env-pill.prod    { background: rgba(211,47,47,0.12); color: #D32F2F; border: 1px solid rgba(211,47,47,0.25); }
+.env-pill.dev     { background: rgba(25,118,210,0.12); color: #1976D2; border: 1px solid rgba(25,118,210,0.25); }
+.env-pill.stg     { background: rgba(245,124,0,0.12); color: #F57C00; border: 1px solid rgba(245,124,0,0.25); }
+.env-pill.qa      { background: rgba(123,31,162,0.12); color: #7B1FA2; border: 1px solid rgba(123,31,162,0.25); }
+.env-pill.uat     { background: rgba(56,142,60,0.12); color: #388E3C; border: 1px solid rgba(56,142,60,0.25); }
+.env-pill.release { background: rgba(69,90,100,0.12); color: #455A64; border: 1px solid rgba(69,90,100,0.25); }
 
-/* ─── Env label / mode ─── */
+/* ─── Env label ─── */
 
 .env-label {
   font-size: 12px;
   font-weight: 600;
   color: #1a1a2e;
   flex: 1;
-}
-
-.env-mode {
-  font-size: 10px;
-  color: #A0A0B8;
-  margin-left: auto;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  white-space: normal;
+  line-height: 1.25;
 }
 
 /* ─── No env message ─── */
@@ -211,23 +206,95 @@ body {
   padding: 3px 8px;
   border-radius: 5px;
   cursor: pointer;
-  background: rgba(20,115,230,0.05);
-  border: 1px solid rgba(20,115,230,0.12);
-  color: #8888A8;
-  transition: all 0.15s;
+  background: transparent;
+  border: 1px solid rgba(20,115,230,0.15);
+  color: #A0A0B8;
+  transition: background 0.15s, color 0.15s, border-color 0.15s, box-shadow 0.15s;
 }
 
+/* "auto" chip — neutral dashed style */
 .chip[data-value=""] {
   border-style: dashed;
-  color: #C0C0D8;
-  background: transparent;
+  color: #6B7280;
+  border-color: rgba(107,114,128,0.35);
+  background: rgba(107,114,128,0.06);
+}
+.chip[data-value=""].active {
+  border-style: solid;
+  background: #6B7280;
+  border-color: #6B7280;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(107,114,128,0.4);
 }
 
-.chip.active {
-  background: linear-gradient(135deg, #1473E6, #0D5BBB);
-  border-color: transparent;
+/* ── Per-env chip legend — inactive tints ── */
+.chip[data-value="DEV"] {
+  color: #1976D2;
+  border-color: rgba(25,118,210,0.3);
+  background: rgba(25,118,210,0.06);
+}
+.chip[data-value="STAGE"] {
+  color: #F57C00;
+  border-color: rgba(245,124,0,0.3);
+  background: rgba(245,124,0,0.06);
+}
+.chip[data-value="PROD"] {
+  color: #D32F2F;
+  border-color: rgba(211,47,47,0.3);
+  background: rgba(211,47,47,0.06);
+}
+.chip[data-value="QA"] {
+  color: #7B1FA2;
+  border-color: rgba(123,31,162,0.3);
+  background: rgba(123,31,162,0.06);
+}
+.chip[data-value="UAT"] {
+  color: #388E3C;
+  border-color: rgba(56,142,60,0.3);
+  background: rgba(56,142,60,0.06);
+}
+.chip[data-value="RELEASE"] {
+  color: #455A64;
+  border-color: rgba(69,90,100,0.3);
+  background: rgba(69,90,100,0.08);
+}
+
+/* ── Per-env chip legend — active (selected) ── */
+.chip[data-value="DEV"].active {
+  background: #1976D2;
+  border-color: #1976D2;
   color: #fff;
-  box-shadow: 0 2px 8px rgba(20,115,230,0.4);
+  box-shadow: 0 2px 8px rgba(25,118,210,0.45);
+}
+.chip[data-value="STAGE"].active {
+  background: #F57C00;
+  border-color: #F57C00;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(245,124,0,0.45);
+}
+.chip[data-value="PROD"].active {
+  background: #D32F2F;
+  border-color: #D32F2F;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(211,47,47,0.45);
+}
+.chip[data-value="QA"].active {
+  background: #7B1FA2;
+  border-color: #7B1FA2;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(123,31,162,0.45);
+}
+.chip[data-value="UAT"].active {
+  background: #388E3C;
+  border-color: #388E3C;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(56,142,60,0.45);
+}
+.chip[data-value="RELEASE"].active {
+  background: #455A64;
+  border-color: #455A64;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(69,90,100,0.45);
 }
 
 /* ─── Footer ─── */

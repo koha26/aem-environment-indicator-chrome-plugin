@@ -79,22 +79,22 @@ describe('updateEnvTypeBadge', () => {
     expect(sel.className).toBe('env-type-select type-stg');
   });
 
-  it('sets type-dev for QA (alias)', () => {
+  it('sets type-qa for QA', () => {
     const sel = makeSelect('env-type-select', 'QA');
     updateEnvTypeBadge(sel);
-    expect(sel.className).toBe('env-type-select type-dev');
+    expect(sel.className).toBe('env-type-select type-qa');
   });
 
-  it('sets type-stg for UAT (alias)', () => {
+  it('sets type-uat for UAT', () => {
     const sel = makeSelect('env-type-select', 'UAT');
     updateEnvTypeBadge(sel);
-    expect(sel.className).toBe('env-type-select type-stg');
+    expect(sel.className).toBe('env-type-select type-uat');
   });
 
-  it('sets type-stg for RELEASE (alias)', () => {
+  it('sets type-release for RELEASE', () => {
     const sel = makeSelect('env-type-select', 'RELEASE');
     updateEnvTypeBadge(sel);
-    expect(sel.className).toBe('env-type-select type-stg');
+    expect(sel.className).toBe('env-type-select type-release');
   });
 
   it('preserves fallback-type-select base class', () => {

@@ -7,7 +7,7 @@ import {
 } from './detector.js';
 import { applyFaviconOverlay } from './favicon.js';
 import { applyTitlePrefix, startTitleGuard } from './title.js';
-import { MESSAGE_TYPES, ENV_COLORS, ENV_BADGE_LETTERS } from '../shared/constants.js';
+import { MESSAGE_TYPES, ENV_COLORS } from '../shared/constants.js';
 
 if (window.self !== window.top) {
   // ── Child iframe ────────────────────────────────────────────────────────────
@@ -38,9 +38,8 @@ if (window.self !== window.top) {
     if (!enabled || !envType) return;
 
     if (features.favicon) {
-      const color  = ENV_COLORS[envType]        ?? '#666';
-      const letter = ENV_BADGE_LETTERS[envType] ?? '?';
-      applyFaviconOverlay(color, letter);
+      const color = ENV_COLORS[envType] ?? '#666';
+      applyFaviconOverlay(color);
     }
 
     if (features.titlePrefix) {

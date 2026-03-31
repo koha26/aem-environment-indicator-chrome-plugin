@@ -40,6 +40,19 @@ function resolveEnvForHostname(hostname, { overrides, programs, fallbackPatterns
 // Repopulated automatically when content scripts send REPORT_ENV on navigation.
 const tabState = new Map();
 
+const ACTION_ICON_PATHS = {
+  enabled: {
+    16:  'assets/icon16.png',
+    48:  'assets/icon48.png',
+    128: 'assets/icon128.png',
+  },
+  disabled: {
+    16:  'assets/icon-disabled16.png',
+    48:  'assets/icon-disabled48.png',
+    128: 'assets/icon-disabled128.png',
+  },
+};
+
 // ─── Message Router ───────────────────────────────────────────────────────────
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   switch (message.type) {
@@ -86,6 +99,7 @@ async function handleReportEnv({ hostname, envType: domEnvType, mode }, sender) 
     const newProgram = {
       id:           crypto.randomUUID(),
       name:         hostname,
+      autoDetected: true,
       environments: [{ id: crypto.randomUUID(), type: domEnvType, urlPattern: hostname }],
     };
     const updatedPrograms = [...programs, newProgram];
@@ -128,21 +142,68 @@ async function handleReportEnv({ hostname, envType: domEnvType, mode }, sender) 
 // ─── GET_TAB_STATE ────────────────────────────────────────────────────────────
 async function handleGetTabState(tabId) {
   if (!tabId) return {};
-  const state    = tabState.get(tabId) ?? {};
-  const [features, overrides] = await Promise.all([getFeatures(), getOverrides()]);
-  return { ...state, features, overrides };
+
+  let state = tabState.get(tabId) ?? null;
+
+  // Load full config once — used for both the fallback resolution and the response.
+  const { overrides, programs, fallbackPatterns, features } = await getFullConfig();
+
+  if (!state) {
+    // tabState is empty for this tab: either the SW was restarted (ephemeral map
+    // cleared) or the content script hasn't fired REPORT_ENV yet (e.g. popup
+    // opened immediately after switching to a background tab).
+    // Eagerly resolve from stored config using the tab's current URL so the
+    // popup always shows meaningful information without needing a page reload.
+    try {
+      const tab = await chrome.tabs.get(tabId);
+      const url = tab?.url ?? '';
+      if (url && !url.startsWith('chrome') && !url.startsWith('about')) {
+        const hostname = new URL(url).hostname;
+        const { envType, programName, programId } = resolveEnvForHostname(
+          hostname, { overrides, programs, fallbackPatterns }
+        );
+        state = { hostname, envType, programName, programId, enabled: !!envType };
+        // Repopulate the in-memory cache and re-apply action visuals so popup
+        // and toolbar icon are in sync immediately.
+        tabState.set(tabId, state);
+        updateBadge(tabId, envType, features, !!envType);
+      }
+    } catch {
+      // Tab not found or non-parseable URL — leave state as null
+    }
+  }
+
+  return { ...(state ?? {}), features, overrides };
 }
 
 // ─── SET_OVERRIDE ─────────────────────────────────────────────────────────────
 async function handleSetOverride({ hostname, envType }) {
   if (!hostname) return { success: false };
 
-  const overrides = await getOverrides();
+  const [overrides, programs, fallbackPatterns] = await Promise.all([
+    getOverrides(),
+    getPrograms(),
+    getFallbackPatterns(),
+  ]);
 
   if (envType === null || envType === undefined || envType === '') {
     delete overrides[hostname];
   } else {
     overrides[hostname] = { envType };
+
+    // If no specific program entry exists for this hostname, auto-create one so
+    // it appears in Settings → Programs and can be managed there.
+    // Fallback-pattern matches have programId === null, so they trigger creation too.
+    const match = matchEnvironment(hostname, programs, fallbackPatterns);
+    if (!match.programId) {
+      const newProgram = {
+        id:           crypto.randomUUID(),
+        name:         hostname,
+        autoDetected: true,
+        environments: [{ id: crypto.randomUUID(), type: envType, urlPattern: hostname }],
+      };
+      await setPrograms([...programs, newProgram]);
+    }
   }
 
   await setOverrides(overrides);
@@ -179,7 +240,14 @@ async function handleSetFeatures({ features }) {
 
 // ─── Badge ────────────────────────────────────────────────────────────────────
 function updateBadge(tabId, envType, features, enabled) {
-  if (!features?.badge || !enabled || !envType) {
+  const actionEnabled = Boolean(features?.badge && enabled && envType);
+
+  chrome.action.setIcon({
+    tabId,
+    path: actionEnabled ? ACTION_ICON_PATHS.enabled : ACTION_ICON_PATHS.disabled,
+  }).catch(() => {});
+
+  if (!actionEnabled) {
     chrome.action.setBadgeText({ tabId, text: '' }).catch(() => {});
     return;
   }
@@ -207,6 +275,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   try {
     const url = tab.url ?? '';
     if (!url || url.startsWith('chrome') || url.startsWith('about')) {
+      chrome.action.setIcon({ tabId, path: ACTION_ICON_PATHS.disabled }).catch(() => {});
       chrome.action.setBadgeText({ tabId, text: '' }).catch(() => {});
       return;
     }
@@ -216,6 +285,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     const { envType } = resolveEnvForHostname(hostname, { overrides, programs, fallbackPatterns });
     updateBadge(tabId, envType, features, !!envType);
   } catch {
+    chrome.action.setIcon({ tabId, path: ACTION_ICON_PATHS.disabled }).catch(() => {});
     chrome.action.setBadgeText({ tabId, text: '' }).catch(() => {});
   }
 });

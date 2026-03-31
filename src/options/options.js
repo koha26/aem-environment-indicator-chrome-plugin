@@ -68,18 +68,17 @@ function loadFeatures(features) {
   document.getElementById('feat-badge').checked   = features.badge;
   document.getElementById('feat-favicon').checked = features.favicon;
   document.getElementById('feat-title').checked   = features.titlePrefix;
-  document.getElementById('feat-emoji').checked   = features.emojiInTitle;
 }
 
 function bindFeatureEvents() {
-  const inputs = ['feat-badge', 'feat-favicon', 'feat-title', 'feat-emoji'];
+  const inputs = ['feat-badge', 'feat-favicon', 'feat-title'];
   inputs.forEach(id => {
     document.getElementById(id).addEventListener('change', async () => {
       const updated = {
         badge:        document.getElementById('feat-badge').checked,
         favicon:      document.getElementById('feat-favicon').checked,
         titlePrefix:  document.getElementById('feat-title').checked,
-        emojiInTitle: document.getElementById('feat-emoji').checked,
+        emojiInTitle: false, // removed from UI; always off
       };
       await setFeatures(updated);
       // Notify SW to re-apply badges
@@ -96,10 +95,32 @@ function renderPrograms(programs) {
   const container = document.getElementById('programs-list');
   container.innerHTML = '';
 
+  if (programs.length === 0) {
+    container.innerHTML = `
+      <div class="programs-empty">
+        <div class="programs-empty-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#C0C0D8" stroke-width="1.5">
+            <rect x="2" y="3" width="20" height="14" rx="2"/>
+            <path d="M8 21h8M12 17v4"/>
+          </svg>
+        </div>
+        <div class="programs-empty-text">No programs yet</div>
+        <div class="programs-empty-sub">Add a program to start tracking AEM environments</div>
+      </div>
+    `;
+    bindProgramEvents(container, programs);
+    return;
+  }
+
   programs.forEach((program, pIdx) => {
     const card = document.createElement('div');
     card.className = 'program-card';
     card.dataset.pid = program.id;
+    if (program.autoDetected) card.dataset.autoDetected = 'true';
+
+    const autoBadge = program.autoDetected
+      ? `<span class="program-auto-badge" title="Auto-detected from browser activity">auto</span>`
+      : '';
 
     card.innerHTML = `
       <div class="program-card-header">
@@ -107,7 +128,8 @@ function renderPrograms(programs) {
           placeholder="Program name"
           value="${escHtml(program.name ?? '')}"
           data-pidx="${pIdx}" aria-label="Program name">
-        <button class="btn-danger btn-sm delete-program" data-pidx="${pIdx}">Remove</button>
+        ${autoBadge}
+        <button class="btn-danger btn-sm delete-program" data-pidx="${pIdx}" title="Remove program">✕</button>
       </div>
       <div class="env-table">
         <div class="env-table-header">
@@ -162,7 +184,7 @@ function readProgramsFromForm() {
   return Array.from(cards).map(card => {
     const nameInput = card.querySelector('.program-name-input');
     const envRows   = card.querySelectorAll('.env-row');
-    return {
+    const prog = {
       id:           card.dataset.pid ?? uuid(),
       name:         nameInput?.value ?? '',
       environments: Array.from(envRows).map(row => ({
@@ -171,6 +193,9 @@ function readProgramsFromForm() {
         urlPattern: row.querySelector('.env-pattern-input')?.value.trim() ?? '',
       })),
     };
+    // Preserve the autoDetected flag (stored on the DOM card via dataset)
+    if (card.dataset.autoDetected === 'true') prog.autoDetected = true;
+    return prog;
   });
 }
 
